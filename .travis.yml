@@ -1,18 +1,8 @@
 language: go
-
-go:
-  - "1.11.x"
-  - "1.12.x"
-  - "1.13.x"
-  - "master"
-
-os:
-  - linux
-  - osx
-
-env:
-  - GO111MODULE=on
-
+go: ["1.13"]
 script:
-  - go build
-  - go test -v
+- go get
+- go test .
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker build -t j18e/flog .
+- docker push j18e/flog
