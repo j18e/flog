@@ -114,6 +114,8 @@ func NewWriter(logType string, logFileName string) (io.WriteCloser, error) {
 // NewLog creates a log for given format
 func NewLog(format string, t time.Time) string {
 	switch format {
+	case "json":
+		return NewJSONLog(t)
 	case "apache_common":
 		return NewApacheCommonLog(t)
 	case "apache_combined":

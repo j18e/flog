@@ -9,6 +9,8 @@ import (
 )
 
 const (
+	// JSONLog
+	JSONLog = `{"ipv4_address":"%s","user_id":"%s","@timestamp":"%s","http_method":"%s","resource_uri":"%s","http_version":"%s","http_status":%d,"bytes":%d}`
 	// ApacheCommonLog : {host} {user-identifier} {auth-user-id} [{datetime}] "{method} {request} {protocol}" {response-code} {bytes}
 	ApacheCommonLog = "%s - %s [%s] \"%s %s %s\" %d %d"
 	// ApacheCombinedLog : {host} {user-identifier} {auth-user-id} [{datetime}] "{method} {request} {protocol}" {response-code} {bytes} "{referrer}" "{agent}"
@@ -22,6 +24,21 @@ const (
 	// CommonLogFormat : {host} {user-identifier} {auth-user-id} [{datetime}] "{method} {request} {protocol}" {response-code} {bytes}
 	CommonLogFormat = "%s - %s [%s] \"%s %s %s\" %d %d"
 )
+
+// NewJSONLog creates a JSON formated log string
+func NewJSONLog(t time.Time) string {
+	return fmt.Sprintf(
+		JSONLog,
+		gofakeit.IPv4Address(),
+		RandAuthUserID(),
+		t.Format(JSON),
+		gofakeit.HTTPMethod(),
+		RandResourceURI(),
+		RandHTTPVersion(),
+		gofakeit.StatusCode(),
+		gofakeit.Number(0, 30000),
+	)
+}
 
 // NewApacheCommonLog creates a log string with apache common log format
 func NewApacheCommonLog(t time.Time) string {
