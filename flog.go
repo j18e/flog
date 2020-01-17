@@ -29,12 +29,11 @@ func Generate(option *Option) error {
 
 	if option.Forever {
 		for {
+			log := NewLog(option.Format, time.Now())
+			writer.Write([]byte(log + "\n"))
 			if delay > 0 {
 				time.Sleep(delay)
 			}
-			log := NewLog(option.Format, created)
-			writer.Write([]byte(log + "\n"))
-			created = created.Add(time.Duration(option.Sleep*float64(time.Second/time.Millisecond)) * time.Millisecond)
 		}
 	}
 
