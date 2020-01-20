@@ -14,7 +14,7 @@ import (
 // Generate generates the logs with given options
 func Generate(option *Option) error {
 	splitCount := 1
-	created := time.Now()
+	created := time.Now().Add(option.TimeOffset)
 
 	delay := time.Duration(0)
 	if option.Delay > 0 {
@@ -29,7 +29,7 @@ func Generate(option *Option) error {
 
 	if option.Forever {
 		for {
-			log := NewLog(option.Format, time.Now())
+			log := NewLog(option.Format, time.Now().Add(option.TimeOffset))
 			writer.Write([]byte(log + "\n"))
 			if delay > 0 {
 				time.Sleep(delay)

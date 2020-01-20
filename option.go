@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/pflag"
 )
@@ -29,6 +30,7 @@ Options:
                            with "byte" option, the logs will be split whenever the maximum size in bytes is reached.
   -w, --overwrite          overwrite the existing log files.
   -l, --loop               loop output forever until killed.
+  --time-offset            Offset of the first timestamp (eg 1h, 10s, -10m)
 `
 
 var validFormats = []string{"apache_common", "apache_combined", "apache_error", "rfc3164", "rfc5424", "common_log", "json"}
@@ -36,16 +38,17 @@ var validTypes = []string{"stdout", "log", "gz"}
 
 // Option defines log generator options
 type Option struct {
-	Format    string
-	Output    string
-	Type      string
-	Number    int
-	Bytes     int
-	Sleep     float64
-	Delay     float64
-	SplitBy   int
-	Overwrite bool
-	Forever   bool
+	Format     string
+	Output     string
+	Type       string
+	Number     int
+	Bytes      int
+	Sleep      float64
+	Delay      float64
+	SplitBy    int
+	Overwrite  bool
+	Forever    bool
+	TimeOffset time.Duration
 }
 
 func init() {
@@ -67,16 +70,17 @@ func errorExit(err error) {
 
 func defaultOptions() *Option {
 	return &Option{
-		Format:    "apache_common",
-		Output:    "generated.log",
-		Type:      "stdout",
-		Number:    1000,
-		Bytes:     0,
-		Sleep:     0.0,
-		Delay:     0.0,
-		SplitBy:   0,
-		Overwrite: false,
-		Forever:   false,
+		Format:     "apache_common",
+		Output:     "generated.log",
+		Type:       "stdout",
+		Number:     1000,
+		Bytes:      0,
+		Sleep:      0.0,
+		Delay:      0.0,
+		SplitBy:    0,
+		Overwrite:  false,
+		Forever:    false,
+		TimeOffset: 0,
 	}
 }
 
@@ -154,6 +158,7 @@ func ParseOptions() *Option {
 	splitBy := pflag.IntP("split", "p", opts.SplitBy, "Set the maximum number of lines or maximum size in bytes of a log file")
 	overwrite := pflag.BoolP("overwrite", "w", false, "Overwrite the existing log files")
 	forever := pflag.BoolP("loop", "l", false, "Loop output forever until killed")
+	timeOffset := pflag.Duration("time-offset", 0, "Offset of the first timestamp (eg 1h, 10s, -10m)")
 
 	pflag.Parse()
 
@@ -189,5 +194,6 @@ func ParseOptions() *Option {
 	opts.Output = *output
 	opts.Overwrite = *overwrite
 	opts.Forever = *forever
+	opts.TimeOffset = *timeOffset
 	return opts
 }
