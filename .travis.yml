@@ -4,5 +4,6 @@ script:
 - go get
 - go test .
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- docker build -t j18e/flog .
-- docker push j18e/flog
+- TARGET="j18e/flog:${TRAVIS_BRANCH}-${TRAVIS_BUILD_NUMBER}"
+- docker build -t ${TARGET} .
+- docker push ${TARGET}
